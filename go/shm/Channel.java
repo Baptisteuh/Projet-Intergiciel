@@ -11,42 +11,45 @@ public class Channel<T> implements go.Channel<T> {
 
     private String channelName;
 
-    private Semaphore verrou;
-    private Semaphore blockOut;
-
-    private List<Observer> observers;
-    private Direction direction;
+    public Semaphore verrou;
+    public Semaphore blockOut;
 
     private T data;
+
+    private List<Observer> inObservers;
+    private List<Observer> outObservers;
 
     public Channel(String name) {
         channelName = name;
         verrou = new Semaphore(0, true);
         blockOut = new Semaphore(1, true);
-        observers = new ArrayList<>();
+        inObservers = new ArrayList<>();
+        outObservers = new ArrayList<>();
     }
 
     public T in() {
         try {
+            notifyObservers(Direction.In);
             verrou.acquire();
             blockOut.release();
-            if (direction == Direction.In) updateObservers();
-            return data;
+            T d = data;
+            data = null;
+            return d;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-    
+
     public void out(T v) {
         try {
+            notifyObservers(Direction.Out);
             blockOut.acquire();
+            data = v;
+            verrou.release();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        data = v;
-        verrou.release();
-        if (direction == Direction.Out) updateObservers();
     }
 
     public String getName() {
@@ -54,15 +57,18 @@ public class Channel<T> implements go.Channel<T> {
     }
 
     public void observe(Direction dir, Observer observer) {
-        direction = dir;
-        observers.add(observer);
+        if (dir == Direction.In) {
+            inObservers.add(observer);
+        } else if (dir == Direction.Out) {
+            outObservers.add(observer);
+        }
     }
 
-    public void updateObservers() {
-        for (Observer obs : observers) {
-            // obs.update();
-            ((Selector) obs).channelsList.put(this, Direction.inverse(direction));
+    private void notifyObservers(Direction dir) {
+        List<Observer> observersToNotify = (dir == Direction.In) ? inObservers : outObservers;
+        for (Observer observer : observersToNotify) {
+            observer.update();
         }
-        observers.clear();
+        observersToNotify.clear();
     }
 }

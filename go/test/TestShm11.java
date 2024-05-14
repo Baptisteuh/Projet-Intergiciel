@@ -17,7 +17,7 @@ public class TestShm11 {
         Channel<Integer> c2 = factory.newChannel("c2");
         Channel<Integer> c3 = factory.newChannel("c3");
 
-        Selector s = factory.newSelector(java.util.Set.of(c1, c2, c3), Direction.In); 
+        Selector s = factory.newSelector(java.util.Set.of(c1, c2, c3), Direction.In);
         new Thread(() -> {
                 try { Thread.sleep(2000);  } catch (InterruptedException e) { }
                 quit("KO (deadlock)");
