@@ -5,8 +5,10 @@ import go.Observer;
 
 public class Channel<T> implements go.Channel<T> {
 
+    private String channelName;
+
     public Channel(String name) {
-        // TODO
+        channelName = name;
     }
 
     public void out(T v) {
@@ -19,8 +21,7 @@ public class Channel<T> implements go.Channel<T> {
     }
 
     public String getName() {
-        // TODO
-        return null;
+        return channelName;
     }
 
     public void observe(Direction direction, Observer observer) {

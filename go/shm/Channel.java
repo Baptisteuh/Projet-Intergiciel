@@ -58,9 +58,9 @@ public class Channel<T> implements go.Channel<T> {
 
     public void observe(Direction dir, Observer observer) {
         if (dir == Direction.In) {
-            inObservers.add(observer);
-        } else if (dir == Direction.Out) {
-            outObservers.add(observer);
+            if (!inObservers.contains(observer)) inObservers.add(observer);
+        } else {
+            if (!outObservers.contains(observer)) outObservers.add(observer);
         }
     }
 

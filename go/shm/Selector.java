@@ -12,10 +12,10 @@ import java.util.concurrent.Semaphore;
 
 public class Selector implements go.Selector {
 
-    private Semaphore semaphore = new Semaphore(0, true);
+    private final Semaphore semaphore = new Semaphore(0, true);
 
-    private Map<Channel, Direction> channelsList = new HashMap<>();
-    private List<Channel> availableChannels = new ArrayList<>();
+    private final Map<Channel, Direction> channelsList = new HashMap<>();
+    private final List<Channel> availableChannels = new ArrayList<>();
 
     public Selector(Map<Channel, Direction> channels) {
         for (Channel chan : channels.keySet()) {
