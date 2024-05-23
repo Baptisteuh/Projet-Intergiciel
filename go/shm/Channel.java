@@ -11,7 +11,8 @@ public class Channel<T> implements go.Channel<T> {
 
     private String channelName;
 
-    public Semaphore verrou;
+    public Semaphore barrier;
+    public Semaphore blockIn;
     public Semaphore blockOut;
 
     private T data;
@@ -21,8 +22,11 @@ public class Channel<T> implements go.Channel<T> {
 
     public Channel(String name) {
         channelName = name;
-        verrou = new Semaphore(0, true);
+
+        blockIn = new Semaphore(0, true);
         blockOut = new Semaphore(1, true);
+        barrier = new Semaphore(0, true);
+
         inObservers = new ArrayList<>();
         outObservers = new ArrayList<>();
     }
@@ -30,10 +34,12 @@ public class Channel<T> implements go.Channel<T> {
     public T in() {
         try {
             notifyObservers(Direction.In);
-            verrou.acquire();
-            blockOut.release();
+            barrier.release();
+            blockIn.acquire();
+
             T d = data;
             data = null;
+            blockOut.release();
             return d;
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,9 +50,11 @@ public class Channel<T> implements go.Channel<T> {
     public void out(T v) {
         try {
             notifyObservers(Direction.Out);
+            barrier.acquire();
+
             blockOut.acquire();
             data = v;
-            verrou.release();
+            blockIn.release();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
