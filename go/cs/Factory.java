@@ -1,6 +1,14 @@
 package go.cs;
 
 import go.Direction;
+import go.shm.Channel;
+
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.Map;
 import java.util.function.Function;
@@ -12,8 +20,27 @@ public class Factory implements go.Factory {
      * Côté serveur, le canal est créé au premier appel avec un nom donné ;
      * les appels suivants avec le même nom donneront accès au même canal.
      */
+    private ChannelList channels;
+
+    public Factory() {
+        try {
+            channels = (ChannelList)Naming.lookup("rmi://localhost:1099/ChannelList");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public <T> go.Channel<T> newChannel(String name) {
         // TODO
+        try {
+            channels.insert(name);
+            System.out.println("name");
+            go.cs.Channel<T> c = new go.cs.Channel<T>((ChannelRemote) channels.get(name));
+            return c;
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
     
