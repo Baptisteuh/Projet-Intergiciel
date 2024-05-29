@@ -15,4 +15,6 @@ public interface ChannelRemote<T> extends Remote {
     String getName() throws RemoteException;
 
     void observe(Direction direction, Observer observer) throws RemoteException;
+
+    boolean waiting() throws RemoteException;
 }

@@ -16,6 +16,7 @@ public class Selector implements go.Selector {
 
     private final Map<Channel, Direction> channelsList = new HashMap<>();
     private final List<Channel> availableChannels = new ArrayList<>();
+    private final Map<Channel, ObserverImpl> observers = new HashMap<>();
 
     public Selector(Map<Channel, Direction> channels) {
 
@@ -28,14 +29,8 @@ public class Selector implements go.Selector {
             }
 
             channelsList.put(chan, channels.get(chan));
-            chan.observe(Direction.inverse(channels.get(chan)), new Observer() {
-                @Override
-                public void update() {
-                    // System.out.println("Ajout du chan " + chan.getName());
-                    availableChannels.add(chan);
-                    semaphore.release();
-                }
-            });
+            observers.put(chan, new ObserverImpl(chan, availableChannels, semaphore));
+            chan.observe(Direction.inverse(channels.get(chan)), observers.get(chan));
         }
     }
 
@@ -56,13 +51,8 @@ public class Selector implements go.Selector {
         }
         Channel chan = availableChannels.get(0);
         availableChannels.remove(0);
-        chan.observe(Direction.inverse(channelsList.get(chan)), new Observer() {
-            @Override
-            public void update() {
-                availableChannels.add(chan);
-                semaphore.release();
-            }
-        });
+        chan.observe(Direction.inverse(channelsList.get(chan)), observers.get(chan));
+
         return chan;
     }
 }

@@ -49,4 +49,12 @@ public class Channel<T> implements go.Channel<T> {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean waiting() {
+        try {
+            return channel.waiting();
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
