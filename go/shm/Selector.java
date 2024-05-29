@@ -18,7 +18,15 @@ public class Selector implements go.Selector {
     private final List<Channel> availableChannels = new ArrayList<>();
 
     public Selector(Map<Channel, Direction> channels) {
+
         for (Channel chan : channels.keySet()) {
+            go.shm.Channel c = (go.shm.Channel) chan;
+
+            if (c.waiting()) {
+                availableChannels.add(chan);
+                semaphore.release();
+            }
+
             channelsList.put(chan, channels.get(chan));
             chan.observe(Direction.inverse(channels.get(chan)), new Observer() {
                 @Override

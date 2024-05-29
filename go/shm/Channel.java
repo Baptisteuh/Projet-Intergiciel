@@ -31,6 +31,11 @@ public class Channel<T> implements go.Channel<T> {
         outObservers = new ArrayList<>();
     }
 
+    public boolean waiting() {
+        return (blockOut.availablePermits() >= 1 && barrier.availablePermits() >= 1) ||
+                (blockIn.availablePermits() >= 1&& barrier.availablePermits() >= 1);
+    }
+
     public T in() {
         try {
             notifyObservers(Direction.In);
