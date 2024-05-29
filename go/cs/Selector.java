@@ -10,6 +10,10 @@ public class Selector implements go.Selector {
     private final Map<Channel, Direction> channelsList = new HashMap<>();
     private final List<Channel> availableChannels = new ArrayList<>();
 
+    public Selector() {
+
+    }
+
     public Channel select() {
         // TODO
         return null;

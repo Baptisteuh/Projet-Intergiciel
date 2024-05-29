@@ -34,7 +34,7 @@ public class Factory implements go.Factory {
         // TODO
         try {
             channels.insert(name);
-            System.out.println("name");
+            System.out. println("name");
             go.cs.Channel<T> c = new go.cs.Channel<T>((ChannelRemote) channels.get(name));
             return c;
         } catch (RemoteException e) {
