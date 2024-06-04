@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ChannelListImpl extends UnicastRemoteObject implements ChannelList {
-    //TODO: Change Object type
     private Map<String, ChannelRemote> channels = new HashMap<>();
 
     public ChannelListImpl() throws RemoteException {
