@@ -21,11 +21,6 @@ public class Selector implements go.Selector {
         for (Channel chan : channels.keySet()) {
             go.cs.Channel c = (go.cs.Channel) chan;
 
-            if (c.waiting()) {
-                availableChannels.add(chan);
-                semaphore.release();
-            }
-
             channelsList.put(chan, channels.get(chan));
             ObserverRemote remoteObserver;
             try {
@@ -33,9 +28,13 @@ public class Selector implements go.Selector {
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
-            observers.put(chan, new Observer(remoteObserver));
+            observers.put(c, new Observer(remoteObserver));
 
-            chan.observe(Direction.inverse(channels.get(chan)), observers.get(chan));
+            c.observe(Direction.inverse(channels.get(c)), observers.get(c));
+
+            if (c.waiting()) {
+                observers.get(c).update();
+            }
         }
     }
 

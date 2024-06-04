@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class ChannelListImpl extends UnicastRemoteObject implements ChannelList {
     //TODO: Change Object type
-    private Map<String, Object> channels = new HashMap<>();
+    private Map<String, ChannelRemote> channels = new HashMap<>();
 
     public ChannelListImpl() throws RemoteException {
     }
@@ -30,8 +30,7 @@ public class ChannelListImpl extends UnicastRemoteObject implements ChannelList 
     }
 
     @Override
-    public Object get(String name)  {
-        Object c = channels.get(name);
-        return c;
+    public ChannelRemote get(String name)  {
+        return channels.get(name);
     }
 }
