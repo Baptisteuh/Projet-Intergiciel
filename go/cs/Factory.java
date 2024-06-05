@@ -34,7 +34,6 @@ public class Factory implements go.Factory {
         // TODO
         try {
             channels.insert(name);
-            System.out. println("name");
             go.cs.Channel<T> c = new go.cs.Channel<T>((ChannelRemote) channels.get(name));
             return c;
         } catch (RemoteException e) {
@@ -53,7 +52,7 @@ public class Factory implements go.Factory {
     /** Spécifie quels sont les canaux écoutés et la même direction pour tous. */
     public go.Selector newSelector(Set<go.Channel> channels, Direction direction) {
         return newSelector(channels
-                           .stream() 
+                           .stream()
                            .collect(Collectors.toMap(Function.identity(), e -> direction)));
     }
 

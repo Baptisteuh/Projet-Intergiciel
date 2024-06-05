@@ -1,4 +1,4 @@
-package go.test;
+package go.test.shm;
 
 import go.Direction;
 import go.*;
